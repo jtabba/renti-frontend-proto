@@ -5,18 +5,18 @@ import {
 	useJsApiLoader
 } from "@react-google-maps/api";
 import { FC, useMemo, useState } from "react";
-import { SYDNEY_CENTRE } from "../../constants/mapData";
+import { SAMPLE_DATA, SYDNEY_CENTRE } from "../../constants/mapData";
 import { GOOGLE_API_KEY } from "../../constants/apiKeys";
 import { Box, Flex, Img, Spinner, Text } from "@chakra-ui/react";
-import { INSPECTION_DATA } from "../../database/aus-addresses";
-import { MapData, MapGeocode } from "./types";
+import { MapGeocode } from "./types";
+import { formatInspectionData } from "../../utils/formatInspectionData";
 // import { BsRecordCircle } from "react-icons/bs";
 
-interface IMapProps {
+interface ISearchResultsMap {
 	mapZoom: number;
 }
 
-export const Map: FC<IMapProps> = ({ mapZoom }) => {
+export const SearchResultsMap: FC<ISearchResultsMap> = ({ mapZoom }) => {
 	const [selectedMarker, setSelectedMarker] = useState<{
 		geocode: MapGeocode;
 		markerId: string;
@@ -26,7 +26,7 @@ export const Map: FC<IMapProps> = ({ mapZoom }) => {
 		googleMapsApiKey: GOOGLE_API_KEY,
 		id: "google-map"
 	});
-	const sampleData: MapData[] = INSPECTION_DATA.slice(200, 250);
+
 	const center = useMemo(() => mapCentre, [mapCentre]);
 	const mapContainerStyle = {
 		height: "100%",
@@ -64,23 +64,18 @@ export const Map: FC<IMapProps> = ({ mapZoom }) => {
 	return (
 		<>
 			{isLoaded ? (
-				<Box h={"100vh"} w={"80%"}>
+				<Box h={"100vh"}>
 					<GoogleMap
 						zoom={mapZoom}
 						center={center}
 						mapContainerStyle={mapContainerStyle}
 					>
-						{sampleData.map((inspection) => {
-							const geocode = {
-								lat: inspection.geocode.latitude,
-								lng: inspection.geocode.longitude
-							};
-							const inspectionDateStart = new Date(
-								inspection.inspectionTime
-							).toLocaleString("en-AU");
-							const inspectionDateEnd = new Date(
-								inspection.inspectionTimeEnd
-							).toLocaleString("en-AU");
+						{SAMPLE_DATA.map((inspection) => {
+							const {
+								geocode,
+								inspectionDateStart,
+								inspectionDateEnd
+							} = formatInspectionData(inspection);
 
 							return (
 								<MarkerF
