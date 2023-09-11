@@ -3,7 +3,8 @@ import { mode } from "@chakra-ui/theme-tools";
 
 export const themeDark = "#242424";
 export const themeGrey = "#717171";
-export const themeBlue = "#0075A2";
+export const themeGreen = "#23C629";
+export const themeDarkGreen = "#07910C";
 export const themeWhite = "#F0F0F0";
 
 export const customTheme = extendTheme({
@@ -19,8 +20,8 @@ export const customTheme = extendTheme({
 			white: themeWhite,
 			dark: themeDark,
 			grey: themeGrey,
-			blue: themeBlue,
-			darkBlue: "#004C6A",
+			main: themeGreen,
+			secondary: themeDarkGreen,
 			500: themeDark
 		}
 	},
@@ -40,8 +41,8 @@ export const customTheme = extendTheme({
 		caption: {
 			fontSize: ["xs", "smaller", "sm", "md"],
 			margin: 0,
-			color: "primary.dark",
-			fontWeight: "500"
+			color: "primary.dark"
+			// fontWeight: "500"
 		},
 		error: {
 			fontSize: ["xs", "smaller", "sm", "md"],

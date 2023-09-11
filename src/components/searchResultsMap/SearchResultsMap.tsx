@@ -64,7 +64,7 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({ mapZoom }) => {
 	return (
 		<>
 			{isLoaded ? (
-				<Box h={"100vh"}>
+				<Box h={"100vh"} w={"120%"}>
 					<GoogleMap
 						zoom={mapZoom}
 						center={center}

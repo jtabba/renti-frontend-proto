@@ -1,4 +1,4 @@
-import { Grid } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import { SearchResultsMap } from "../components/searchResultsMap/SearchResultsMap";
 import { useState } from "react";
 import { DEFAULT_ZOOM } from "../constants/mapData";
@@ -12,9 +12,14 @@ export const SearchResults = () => {
 	};
 
 	return (
-		<Grid templateColumns={"1fr 1.5fr"} gap={2} w={"100%"}>
+		<HStack
+			w={"100%"}
+			h={"100%"}
+			maxHeight={"100%"}
+			justifyContent={"space-between"}
+		>
 			<SearchResultsList handleZoom={handleZoom} />
 			<SearchResultsMap mapZoom={mapZoom} />
-		</Grid>
+		</HStack>
 	);
 };

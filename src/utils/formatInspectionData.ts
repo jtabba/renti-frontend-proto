@@ -7,10 +7,16 @@ export const formatInspectionData = (inspection: MapData) => {
 	};
 	const inspectionDateStart = new Date(
 		inspection.inspectionTime
-	).toLocaleString("en-AU");
+	).toLocaleString("en-AU", {
+		hour: "2-digit",
+		minute: "2-digit"
+	});
 	const inspectionDateEnd = new Date(
 		inspection.inspectionTimeEnd
-	).toLocaleString("en-AU");
+	).toLocaleString("en-AU", {
+		hour: "2-digit",
+		minute: "2-digit"
+	});
 
 	return {
 		geocode,
