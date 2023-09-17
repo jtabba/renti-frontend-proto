@@ -1,7 +1,26 @@
-export type GeocodeData = {
+export type GeoJson = {
+	type: "Point";
+	coordinates: number[];
+};
+
+export type Geocode = {
+	lat: number;
+	lng: number;
+};
+
+export type PropertySearchData = {
+	geocode: Geocode;
+	locaton: GeoJson;
+	image: string;
+	bathrooms: number;
+	bedrooms: number;
+	size: string;
+	id: string;
+	inspectionTime: string;
+	weeklyPrice: number;
+	inspectionTimeEnd: string;
+	agentNumber: string;
 	formattedAddress: string;
-	latitude: number;
-	longitude: number;
 	country: null;
 	city: string;
 	stateCode: string;
@@ -9,24 +28,4 @@ export type GeocodeData = {
 	streetName: string;
 	streetNumber: null;
 	countryCode: string;
-	provider: string;
-};
-
-export type MapGeocode = {
-	lat: number;
-	lng: number;
-};
-
-export type MapData = {
-	geocode: GeocodeData;
-	image: string;
-	bathrooms: number;
-	bedrooms: number;
-	size: string;
-	id: string;
-	state: string;
-	inspectionTime: string;
-	weeklyPrice: number;
-	inspectionTimeEnd: string;
-	agentNumber: string;
 };

@@ -1,30 +1,70 @@
-import { Button, Flex, HStack, Input, Text, VStack } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Button, HStack, Input } from "@chakra-ui/react";
+import { useNavigate, createSearchParams } from "react-router-dom";
+import Geocode from "react-geocode";
+// import { Geocode as TGeocode } from "./searchResultsMap/types";
+import { GOOGLE_API_KEY } from "../constants/apiKeys";
+import { useState, MouseEvent, FC } from "react";
 
-export const Search = () => {
+Geocode.setApiKey(GOOGLE_API_KEY);
+Geocode.setLanguage("en");
+Geocode.setRegion("au");
+Geocode.enableDebug();
+
+interface ISearch {
+	width: string;
+}
+
+type SearchParams = {
+	[key: string]: string;
+};
+
+export const Search: FC<ISearch> = ({ width }) => {
+	const [searchSuburb, setSearchSuburb] = useState<SearchParams>({});
 	const navigate = useNavigate();
 
+	const handleSearchChange = (key: string, value: string) => {
+		setSearchSuburb({ ...searchSuburb, [key]: value });
+	};
+
+	const handleSearch = async (event: MouseEvent) => {
+		event.preventDefault();
+
+		console.log("Suburb", searchSuburb);
+
+		try {
+			const geocodeRes = await Geocode.fromAddress(searchSuburb.suburb);
+			const { lat, lng } = geocodeRes.results[0].geometry.location;
+
+			const searchParams = {
+				...searchSuburb,
+				lat: lat,
+				lng: lng
+			};
+
+			navigate({
+				pathname: "/search-results",
+				search: `?${createSearchParams(searchParams)}`
+			});
+		} catch (err: unknown) {
+			console.log(err);
+		}
+	};
+
 	return (
-		<Flex
-			w={"50%"}
-			h={"30%"}
-			alignItems={"center"}
-			bg={"primary.blue"}
-			borderRadius={15}
-		>
-			<VStack spacing={14} w={"100%"}>
-				<Text fontSize={"3xl"} fontWeight={600} color={"primary.white"}>
-					Search for home inspections around you
-				</Text>
+		<HStack w={"100%"} justifyContent={"center"}>
+			<Input
+				width={width}
+				placeholder="Search..."
+				id="suburb"
+				onChange={({ currentTarget: { id, value } }) =>
+					handleSearchChange(id, value)
+				}
+				sx={{ color: "primary.white", fontSize: "lg" }}
+			/>
 
-				<HStack w={"100%"} justifyContent={"center"}>
-					<Input width={"60%"} placeholder="Search..." />
-
-					<Button onClick={() => navigate("/search-results")}>
-						Search
-					</Button>
-				</HStack>
-			</VStack>
-		</Flex>
+			<Button onClick={async (event) => handleSearch(event)}>
+				Search
+			</Button>
+		</HStack>
 	);
 };

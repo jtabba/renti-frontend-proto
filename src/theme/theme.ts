@@ -28,7 +28,8 @@ export const customTheme = extendTheme({
 	textStyles: {
 		header: {
 			fontSize: ["md", "lg", "xl", "2xl"],
-			margin: "30px"
+			fontWeight: "bold"
+			// margin: "30px"
 		},
 		body: {
 			fontSize: ["sm", "md", "lg", "xl"],
@@ -39,7 +40,7 @@ export const customTheme = extendTheme({
 			fontSize: ["sm", "md", "lg", "xl"]
 		},
 		caption: {
-			fontSize: ["xs", "smaller", "sm", "md"],
+			fontSize: ["smaller", "sm", "md"],
 			margin: 0,
 			color: "primary.dark"
 			// fontWeight: "500"

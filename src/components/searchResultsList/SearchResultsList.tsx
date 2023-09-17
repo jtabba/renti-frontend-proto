@@ -1,48 +1,51 @@
-import { VStack, Text, Grid, Img, Box, Divider, Flex } from "@chakra-ui/react";
+import { VStack, Text, Grid, Box, Divider, Flex } from "@chakra-ui/react";
 import { FC } from "react";
 import { ButtonGroup } from "../reusableComponents/ButtonGroup";
-import { SAMPLE_DATA } from "../../constants/mapData";
-import { formatInspectionData } from "../../utils/formatInspectionData";
 import { ScrollContainer } from "./styles";
-import { PhoneIcon } from "@chakra-ui/icons";
-import {
-	BsFillTelephoneFill,
-	PiToiletFill,
-	IoIosBed,
-	BiSolidTimeFive,
-	FaDollarSign
-} from "react-icons/bs";
+import { PropertyInformation } from "./PropertyInformation";
+import { PropertyImages } from "./PropertyImages";
+import { PropertySearchData } from "../searchResultsMap/types";
+import { Search } from "../Search";
 
 interface ISearchResultsList {
+	properties: PropertySearchData[];
 	handleZoom: (value: number) => void;
 }
 
-export const SearchResultsList: FC<ISearchResultsList> = ({ handleZoom }) => {
+export const SearchResultsList: FC<ISearchResultsList> = ({
+	properties,
+	handleZoom
+}) => {
 	const ZOOM_OPTIONS = [5, 10, 25, 50];
 
 	return (
-		<VStack maxH={"100%"} w={"100%"} alignItems={"center"}>
-			<VStack margin={8}>
-				<Text color={"primary.white"}>Select search radius</Text>
-				<ButtonGroup
-					dataArray={ZOOM_OPTIONS}
-					onClickFunction={handleZoom}
-				/>
+		<Flex
+			maxH={"100%"}
+			minH={"100%"}
+			w={"100%"}
+			flexDirection={"column"}
+			// justifyContent={"space-between"}
+		>
+			<VStack w={"100%"} margin={"32px 0px 32px 0px"} gap={8}>
+				<Search width={"66%"} />
+				<VStack>
+					<Text color={"primary.white"}>Select search radius</Text>
+					<ButtonGroup
+						dataArray={ZOOM_OPTIONS}
+						onClickFunction={handleZoom}
+					/>
+				</VStack>
 			</VStack>
 
 			<ScrollContainer>
-				{SAMPLE_DATA.map((inspection) => {
-					const { inspectionDateStart, inspectionDateEnd } =
-						formatInspectionData(inspection);
-
-					return (
-						<Box key={inspection.id} margin={"0px 40px"}>
+				{properties.length > 0 ? (
+					properties.map((property) => (
+						<Box key={property.id} margin={"0px 60px"}>
 							<Grid
 								borderRadius={8}
 								bg={"primary.white"}
-								templateColumns={"1fr 1fr"}
+								templateRows={"auto-fill"}
 								margin={"0px 0px 32px 0px"}
-								textAlign={"left"}
 							>
 								<Flex
 									justifyContent={"flex-start"}
@@ -50,40 +53,23 @@ export const SearchResultsList: FC<ISearchResultsList> = ({ handleZoom }) => {
 									gap={4}
 									margin={8}
 								>
-									<Text
-										color={"primary.dark"}
-										fontWeight={600}
-									>
-										{inspection.geocode.formattedAddress}
+									<Text textStyle={"header"}>
+										{property.formattedAddress}
 									</Text>
-									<Text>
-										Inspection start: {inspectionDateStart}
-									</Text>
-									<Text>
-										Inspection end: {inspectionDateEnd}
-									</Text>
-									<Text>
-										Agent number: {inspection.agentNumber}
-									</Text>
-									<Text>Bedrooms: {inspection.bedrooms}</Text>
-									<Text>
-										Bathrooms: {inspection.bathrooms}
-									</Text>
-									<Text>
-										Price: ${inspection.weeklyPrice}
-									</Text>
+									<PropertyInformation property={property} />
 								</Flex>
-								<Img
-									objectFit={"cover"}
-									borderRadius={"0px 8px 8px 0px"}
-									src={inspection.image}
-								/>
+								<PropertyImages images={[property.image]} />
 							</Grid>
-							<Divider margin={"0px 0px 32px 0px"} />
+							{properties.length > 1 && (
+								<Divider margin={"0px 0px 32px 0px"} />
+							)}
 						</Box>
-					);
-				})}
+					))
+				) : (
+					<Text>No results match your crtieria</Text>
+				)}
 			</ScrollContainer>
-		</VStack>
+		</Flex>
+		// </Flex>
 	);
 };

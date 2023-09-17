@@ -5,27 +5,31 @@ import {
 	useJsApiLoader
 } from "@react-google-maps/api";
 import { FC, useMemo, useState } from "react";
-import { SAMPLE_DATA, SYDNEY_CENTRE } from "../../constants/mapData";
+import { SYDNEY_CENTRE } from "../../constants/mapData";
 import { GOOGLE_API_KEY } from "../../constants/apiKeys";
 import { Box, Flex, Img, Spinner, Text } from "@chakra-ui/react";
-import { MapGeocode } from "./types";
-import { formatInspectionData } from "../../utils/formatInspectionData";
+import { Geocode, PropertySearchData } from "./types";
+import { formatInspectionTime } from "../../utils/formatInspectionTime";
 // import { BsRecordCircle } from "react-icons/bs";
 
 interface ISearchResultsMap {
 	mapZoom: number;
+	properties: PropertySearchData[];
 }
 
-export const SearchResultsMap: FC<ISearchResultsMap> = ({ mapZoom }) => {
-	const [selectedMarker, setSelectedMarker] = useState<{
-		geocode: MapGeocode;
-		markerId: string;
-	} | null>(null);
-	const [mapCentre, setMapCentre] = useState<MapGeocode>(SYDNEY_CENTRE);
-	const { isLoaded, loadError } = useJsApiLoader({
+export const SearchResultsMap: FC<ISearchResultsMap> = ({
+	mapZoom,
+	properties
+}) => {
+	const { isLoaded: isGoogleMapsLoaded } = useJsApiLoader({
 		googleMapsApiKey: GOOGLE_API_KEY,
 		id: "google-map"
 	});
+	const [selectedMarker, setSelectedMarker] = useState<{
+		geocode: Geocode;
+		markerId: string;
+	} | null>(null);
+	const [mapCentre, setMapCentre] = useState(SYDNEY_CENTRE);
 
 	const center = useMemo(() => mapCentre, [mapCentre]);
 	const mapContainerStyle = {
@@ -33,17 +37,12 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({ mapZoom }) => {
 		width: "100%"
 	};
 
-	const handleMarkerClick = (geocode: MapGeocode, markerId: string) => {
-		setMapCentre(geocode);
+	const handleMarkerClick = (geocode: Geocode, markerId: string) => {
+		setMapCentre({
+			...geocode
+		});
 		setSelectedMarker({ geocode, markerId });
 	};
-
-	// const currentDate = new Date(Date.now() + 8 * 86400000);
-	// const newDateOptions = {
-	// 	year: "numeric",
-	// 	month: "2-digit",
-	// 	day: "2-digit"
-	// };
 
 	if (!GOOGLE_API_KEY) {
 		return (
@@ -53,102 +52,85 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({ mapZoom }) => {
 		);
 	}
 
-	if (loadError) {
-		return (
-			<Box>
-				<Text>Map cannot be loaded right now, sorry.</Text>
-			</Box>
-		);
+	if (!isGoogleMapsLoaded) {
+		return <Spinner />;
 	}
 
 	return (
-		<>
-			{isLoaded ? (
-				<Box h={"100vh"} w={"120%"}>
-					<GoogleMap
-						zoom={mapZoom}
-						center={center}
-						mapContainerStyle={mapContainerStyle}
-					>
-						{SAMPLE_DATA.map((inspection) => {
-							const {
-								geocode,
-								inspectionDateStart,
-								inspectionDateEnd
-							} = formatInspectionData(inspection);
+		<Box h={"100vh"} w={"120%"}>
+			<GoogleMap
+				zoom={mapZoom}
+				center={center}
+				mapContainerStyle={mapContainerStyle}
+			>
+				{properties.length > 0 ? (
+					properties.map((property) => {
+						const { inspectionDateStart, inspectionDateEnd } =
+							formatInspectionTime(property);
 
-							return (
-								<MarkerF
-									// icon={{ url: require(BsRecordCircle) }}
-									key={inspection.id}
-									position={geocode}
-									onClick={() =>
-										handleMarkerClick(
-											geocode,
-											inspection.id
-										)
-									}
-								>
-									{selectedMarker &&
-										selectedMarker.markerId ===
-											inspection.id && (
-											<InfoWindowF
-												onCloseClick={() =>
-													setSelectedMarker(null)
-												}
+						return (
+							<MarkerF
+								// icon={{ url: require(BsRecordCircle) }}
+								key={property.id}
+								position={property.geocode}
+								onClick={() =>
+									handleMarkerClick(
+										property.geocode,
+										property.id
+									)
+								}
+							>
+								{selectedMarker &&
+									selectedMarker.markerId === property.id && (
+										<InfoWindowF
+											onCloseClick={() =>
+												setSelectedMarker(null)
+											}
+										>
+											<Flex
+												flexDirection={"column"}
+												alignItems={"left"}
+												justifyContent={"space-evenly"}
+												gap={4}
 											>
-												<Flex
-													flexDirection={"column"}
-													alignItems={"left"}
-													justifyContent={
-														"space-evenly"
-													}
-													gap={4}
-												>
-													<Text fontWeight={400}>
-														{
-															inspection.geocode
-																.formattedAddress
-														}
-													</Text>
-													<Text>
-														Inspection start:{" "}
-														{inspectionDateStart}
-													</Text>
-													<Text>
-														Inspection end:{" "}
-														{inspectionDateEnd}
-													</Text>
-													<Text>
-														Agent number:{" "}
-														{inspection.agentNumber}
-													</Text>
-													<Text>
-														Bedrooms:{" "}
-														{inspection.bedrooms}
-													</Text>
-													<Text>
-														Bathrooms:{" "}
-														{inspection.bathrooms}
-													</Text>
-													<Text>
-														Price: $
-														{inspection.weeklyPrice}
-													</Text>
-													<Img
-														src={inspection.image}
-													/>
-												</Flex>
-											</InfoWindowF>
-										)}
-								</MarkerF>
-							);
-						})}
-					</GoogleMap>
-				</Box>
-			) : (
-				<Spinner />
-			)}
-		</>
+												<Text fontWeight={400}>
+													{property.formattedAddress}
+												</Text>
+												<Text>
+													Inspection start:{" "}
+													{inspectionDateStart}
+												</Text>
+												<Text>
+													Inspection end:{" "}
+													{inspectionDateEnd}
+												</Text>
+												<Text>
+													Agent number:{" "}
+													{property.agentNumber}
+												</Text>
+												<Text>
+													Bedrooms:{" "}
+													{property.bedrooms}
+												</Text>
+												<Text>
+													Bathrooms:{" "}
+													{property.bathrooms}
+												</Text>
+												<Text>
+													Price: $
+													{property.weeklyPrice}
+												</Text>
+												<Img src={property.image} />
+											</Flex>
+										</InfoWindowF>
+									)}
+							</MarkerF>
+						);
+					})
+				) : (
+					<></>
+				)}
+			</GoogleMap>
+		</Box>
 	);
 };
