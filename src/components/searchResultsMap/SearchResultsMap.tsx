@@ -1,26 +1,33 @@
 import {
+	Circle,
 	GoogleMap,
 	InfoWindowF,
 	MarkerF,
 	useJsApiLoader
 } from "@react-google-maps/api";
-import { FC, useMemo, useState } from "react";
-import { SYDNEY_CENTRE } from "../../constants/mapData";
+import { memo, useCallback, useState } from "react";
 import { GOOGLE_API_KEY } from "../../constants/apiKeys";
 import { Box, Flex, Img, Spinner, Text } from "@chakra-ui/react";
 import { Geocode, PropertySearchData } from "./types";
 import { formatInspectionTime } from "../../utils/formatInspectionTime";
+import { SYDNEY_CENTRE } from "../../constants/mapData";
 // import { BsRecordCircle } from "react-icons/bs";
 
 interface ISearchResultsMap {
 	mapZoom: number;
 	properties: PropertySearchData[];
+	geocode: Geocode;
+	searchParams: URLSearchParams;
+	getNewSearchResults: () => void;
 }
 
-export const SearchResultsMap: FC<ISearchResultsMap> = ({
+function SearchResultsMap({
 	mapZoom,
-	properties
-}) => {
+	properties,
+	geocode
+}: // searchParams
+// getNewSearchResults
+ISearchResultsMap) {
 	const { isLoaded: isGoogleMapsLoaded } = useJsApiLoader({
 		googleMapsApiKey: GOOGLE_API_KEY,
 		id: "google-map"
@@ -29,13 +36,51 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({
 		geocode: Geocode;
 		markerId: string;
 	} | null>(null);
-	const [mapCentre, setMapCentre] = useState(SYDNEY_CENTRE);
 
-	const center = useMemo(() => mapCentre, [mapCentre]);
+	const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+	const [mapCentre, setMapCentre] = useState({
+		...geocode
+	});
+
 	const mapContainerStyle = {
 		height: "100%",
 		width: "100%"
 	};
+
+	const handleCenterChange = () => {
+		// if (mapRef) {
+		const startMapLocation = mapRef?.getCenter()?.toJSON();
+
+		console.log(startMapLocation);
+
+		setTimeout(() => {
+			const endMapLocation = mapRef?.getCenter()?.toJSON();
+			const hasStoppedDraggingMap =
+				startMapLocation?.lat === endMapLocation?.lat &&
+				startMapLocation?.lng === endMapLocation?.lng;
+
+			if (hasStoppedDraggingMap) {
+				// searchParams.set("lat", String(endMapLocation?.lat));
+				// searchParams.set("lng", String(endMapLocation?.lng));
+				console.log(true);
+				// getNewSearchResults();
+				// setMapCentre({
+				// 	lat: endMapLocation!.lat,
+				// 	lng: endMapLocation!.lng
+				// });
+			}
+		}, 1500);
+		// }
+	};
+	// const onLoad = useCallback((map: google.maps.Map) => {
+	// 	// const bounds = new window.google.maps.LatLngBounds(mapCentre);
+	// 	// map.fitBounds(bounds);
+	// 	setMapRef(map);
+	// }, []);
+
+	const onUnmount = useCallback(() => {
+		setMapRef(null);
+	}, []);
 
 	const handleMarkerClick = (geocode: Geocode, markerId: string) => {
 		setMapCentre({
@@ -57,15 +102,20 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({
 	}
 
 	return (
-		<Box h={"100vh"} w={"120%"}>
+		<Box h={"100vh"}>
 			<GoogleMap
+				// onZoomChanged={}
+				// onLoad={onLoad}
 				zoom={mapZoom}
-				center={center}
+				center={mapCentre}
 				mapContainerStyle={mapContainerStyle}
+				onCenterChanged={handleCenterChange}
+				onUnmount={onUnmount}
 			>
+				<Circle center={SYDNEY_CENTRE} radius={1000} visible={true} />
 				{properties.length > 0 ? (
 					properties.map((property) => {
-						const { inspectionDateStart, inspectionDateEnd } =
+						const { inspectionTimeOpen, inspectionTimeClose } =
 							formatInspectionTime(property);
 
 						return (
@@ -94,33 +144,30 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({
 												gap={4}
 											>
 												<Text fontWeight={400}>
-													{property.formattedAddress}
+													{property["address"]}
 												</Text>
 												<Text>
 													Inspection start:{" "}
-													{inspectionDateStart}
+													{inspectionTimeOpen}
 												</Text>
 												<Text>
 													Inspection end:{" "}
-													{inspectionDateEnd}
+													{inspectionTimeClose}
 												</Text>
 												<Text>
-													Agent number:{" "}
-													{property.agentNumber}
-												</Text>
-												<Text>
-													Bedrooms:{" "}
-													{property.bedrooms}
+													Bedrooms: {property["beds"]}
 												</Text>
 												<Text>
 													Bathrooms:{" "}
-													{property.bathrooms}
+													{property["baths"]}
 												</Text>
 												<Text>
 													Price: $
-													{property.weeklyPrice}
+													{property["weekly_price"]}
 												</Text>
-												<Img src={property.image} />
+												<Img
+													src={property["images"][0]}
+												/>
 											</Flex>
 										</InfoWindowF>
 									)}
@@ -133,4 +180,6 @@ export const SearchResultsMap: FC<ISearchResultsMap> = ({
 			</GoogleMap>
 		</Box>
 	);
-};
+}
+
+export default memo(SearchResultsMap);

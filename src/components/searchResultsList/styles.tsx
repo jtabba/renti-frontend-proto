@@ -7,6 +7,7 @@ export const ScrollContainer = forwardRef<BoxProps, "div">((props, ref) => (
 		maxH={"100%"}
 		w={"100%"}
 		overflowY={"auto"}
+		marginBottom={"32px"}
 		sx={{
 			"&::-webkit-scrollbar": {
 				width: "16px",

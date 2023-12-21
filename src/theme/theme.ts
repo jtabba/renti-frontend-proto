@@ -32,18 +32,18 @@ export const customTheme = extendTheme({
 			// margin: "30px"
 		},
 		body: {
-			fontSize: ["sm", "md", "lg", "xl"],
-			margin: "15px",
-			color: "primary.white"
+			fontSize: ["sm", "md", "lg", "xl"]
+			// margin: "15px"
+			// color: "primary.white"
 		},
 		description: {
 			fontSize: ["sm", "md", "lg", "xl"]
 		},
 		caption: {
-			fontSize: ["smaller", "sm", "md"],
+			fontSize: ["md", "lg"],
 			margin: 0,
-			color: "primary.dark"
-			// fontWeight: "500"
+			color: "primary.dark",
+			fontWeight: "normal"
 		},
 		error: {
 			fontSize: ["xs", "smaller", "sm", "md"],

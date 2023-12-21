@@ -26,7 +26,6 @@ export abstract class InterceptorBase extends AxiosInstanceBase {
 		const token = localStorage.getItem("token");
 
 		if (token) {
-			// we may change this method
 			config.headers.Authorization = `Bearer ${token}`;
 		}
 

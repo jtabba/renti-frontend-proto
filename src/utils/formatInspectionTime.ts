@@ -1,24 +1,25 @@
 import { PropertySearchData } from "../components/searchResultsMap/types";
 
 export const formatInspectionTime = (property: PropertySearchData) => {
-	const inspectionDateStart = new Date(property.inspectionTime)
-		.toLocaleString("en-AU", {
-			hour: "2-digit",
-			minute: "2-digit"
-		})
-		.split(" ")
-		.join("");
+	const inspectionTimeOpen = new Date(
+		property["inspection_open_time"]
+	).toLocaleString("en-AU", {
+		year: "numeric",
+		month: "numeric",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit"
+	});
 
-	const inspectionDateEnd = new Date(property.inspectionTimeEnd)
-		.toLocaleString("en-AU", {
-			hour: "2-digit",
-			minute: "2-digit"
-		})
-		.split(" ")
-		.join("");
+	const inspectionTimeClose = new Date(
+		property["inspection_close_time"]
+	).toLocaleString("en-AU", {
+		hour: "2-digit",
+		minute: "2-digit"
+	});
 
 	return {
-		inspectionDateStart,
-		inspectionDateEnd
+		inspectionTimeOpen,
+		inspectionTimeClose
 	};
 };

@@ -1,38 +1,47 @@
-import { Box, Flex, Grid, Img } from "@chakra-ui/react";
+import { Flex, Grid, Img } from "@chakra-ui/react";
 import { FC } from "react";
+import { themeDarkGreen } from "../../theme/theme";
 
 interface IPropertyImages {
 	images: string[];
 }
 
 export const PropertyImages: FC<IPropertyImages> = ({ images }) => (
-	<Grid
-		gridTemplateColumns={"4fr 2fr"}
-		gap={4}
-		borderRadius={"0px 0px 0px 8px"}
-	>
-		<Box
-			maxW={"100%"}
-			height={"auto"}
-			background={`url(${encodeURI(images[0])})`}
-			backgroundSize={"cover"}
-			backgroundPosition={"center"}
-			backgroundRepeat={"no-repeat"}
+	<Grid gridTemplateColumns={"4fr 2fr"}>
+		<Img
+			src={images[0]}
 			borderRadius={"0px 0px 0px 8px"}
+			borderTop={`2px solid ${themeDarkGreen}`}
+			referrerPolicy="no-referrer"
 		/>
-		<Flex flexWrap={"wrap"} maxH={"100%"} maxW={"100%"}>
-			<Img
-				maxW={"50%"}
-				src="https://as1.ftcdn.net/v2/jpg/02/48/42/64/1000_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
-			/>
-			<Img
-				maxW={"50%"}
-				src="https://as1.ftcdn.net/v2/jpg/02/48/42/64/1000_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
-			/>
-			<Img
-				borderRadius={"0px 0px 8px 0px"}
-				src="https://as1.ftcdn.net/v2/jpg/02/48/42/64/1000_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
-			/>
+		<Flex
+			flexWrap={"wrap"}
+			borderLeft={`2px solid ${themeDarkGreen}`}
+			borderTop={`2px solid ${themeDarkGreen}`}
+			maxH={"100%"}
+			maxW={"100%"}
+		>
+			{images.slice(0, 6).map((image, index) => (
+				<Img
+					key={image}
+					maxW={"50%"}
+					borderRadius={index === 5 ? "0px 0px 8px 0px" : 0}
+					src={image}
+					referrerPolicy="no-referrer"
+				/>
+			))}
 		</Flex>
 	</Grid>
 );
+
+{
+	/* <Box
+	maxW={"100%"}
+	height={"auto"}
+	background={`url(${encodeURI(images[0])})`}
+	backgroundSize={"cover"}
+	backgroundPosition={"center"}
+	backgroundRepeat={"no-repeat"}
+	borderRadius={"0px 0px 0px 8px"}
+/> */
+}

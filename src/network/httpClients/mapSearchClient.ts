@@ -1,4 +1,4 @@
-import { MAP_SEARCH_API_URL } from "../constants/apiKeys";
+import { MAP_SEARCH_API_URL } from "../../constants/apiKeys";
 import { InterceptorBase } from "./httpClientBase";
 
 export class MapSearchClient extends InterceptorBase {
@@ -11,7 +11,7 @@ export class MapSearchClient extends InterceptorBase {
 	public static getInstance(): MapSearchClient {
 		if (!MAP_SEARCH_API_URL) {
 			throw new Error(
-				"Cannot create instance - MAP_SEARCH_API_KURL is not defined"
+				"Cannot create instance - MAP_SEARCH_API_URL is not defined"
 			);
 		}
 
@@ -28,7 +28,7 @@ export class MapSearchClient extends InterceptorBase {
 			url: endpoint
 		});
 
-		if (response.status !== 200) {
+		if (response.status < 200 || response.status >= 300) {
 			throw new Error(
 				`GET request to ${endpoint} failed with status ${response.status}}`
 			);
@@ -44,7 +44,7 @@ export class MapSearchClient extends InterceptorBase {
 			url: endpoint
 		});
 
-		if (response.status !== 200) {
+		if (response.status < 200 || response.status >= 300) {
 			throw new Error(
 				`POST request to ${endpoint} failed with status ${response.status}}`
 			);

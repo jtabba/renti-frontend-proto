@@ -1,5 +1,5 @@
 import { Flex, Text, VStack } from "@chakra-ui/react";
-import { Search } from "../components/Search";
+import { SearchBar } from "../components/SearchBar/SearchBar";
 
 export const Home = () => {
 	return (
@@ -14,7 +14,7 @@ export const Home = () => {
 				<Text fontSize={"3xl"} fontWeight={600} color={"primary.white"}>
 					Search for home inspections around you
 				</Text>
-				<Search width={"60%"} />;
+				<SearchBar searchBarWidth={"70%"} />;
 			</VStack>
 		</Flex>
 	);

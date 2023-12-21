@@ -1,8 +1,10 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import { FC } from "react";
+import { ButtonGreen } from "../../theme/customComponents";
 
 interface IButtonGroup {
-	dataArray: number[];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	dataArray: any[];
 	onClickFunction: (value: number) => void;
 }
 
@@ -11,16 +13,17 @@ export const ButtonGroup: FC<IButtonGroup> = ({
 	onClickFunction
 }) => (
 	<HStack>
-		{dataArray.map((value, index) => (
-			<Button
-				key={`${value}-${index}`}
-				value={value}
+		{dataArray.map(({ optionTitle, zoom }, index) => (
+			<ButtonGreen
+				key={`${optionTitle}-${index}`}
+				value={zoom}
+				size={"lg"}
 				onClick={({ currentTarget }) =>
 					onClickFunction(Number(currentTarget.value))
 				}
 			>
-				{value}
-			</Button>
+				{optionTitle}
+			</ButtonGreen>
 		))}
 	</HStack>
 );

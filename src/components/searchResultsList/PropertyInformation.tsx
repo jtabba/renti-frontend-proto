@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Flex, HStack, Icon, Text } from "@chakra-ui/react";
 import { PropertySearchData } from "../searchResultsMap/types";
 import { BiSolidTimeFive } from "react-icons/bi";
-import { BsFillTelephoneFill } from "react-icons/bs";
+// import { BsFillTelephoneFill } from "react-icons/bs";
 import { PiToiletFill } from "react-icons/pi";
 import { IoIosBed } from "react-icons/io";
 import { FaDollarSign } from "react-icons/fa";
@@ -13,7 +13,7 @@ interface IPropertyInformation {
 }
 
 export const PropertyInformation: FC<IPropertyInformation> = ({ property }) => {
-	const { inspectionDateStart, inspectionDateEnd } =
+	const { inspectionTimeOpen, inspectionTimeClose } =
 		formatInspectionTime(property);
 
 	return (
@@ -22,34 +22,34 @@ export const PropertyInformation: FC<IPropertyInformation> = ({ property }) => {
 				<HStack>
 					<Icon color={"primary.main"} as={FaDollarSign} />
 					<Text textStyle={"caption"} fontWeight={"bold"}>
-						{property.weeklyPrice}
+						{property["weekly_price"]}
 					</Text>
 				</HStack>
 				<HStack>
 					<Icon color={"primary.main"} as={PiToiletFill} />
 					<Text textStyle={"caption"} fontWeight={"bold"}>
-						{property.bathrooms}
+						{property["baths"]}
 					</Text>
 				</HStack>
 				<HStack>
 					<Icon color={"primary.main"} as={IoIosBed} />
 					<Text textStyle={"caption"} fontWeight={"bold"}>
-						{property.bedrooms}
+						{property["beds"]}
 					</Text>
 				</HStack>
 			</HStack>
 			<HStack>
 				<Icon color={"primary.main"} as={BiSolidTimeFive} />
 				<Text textStyle={"caption"} fontWeight={"bold"}>
-					{inspectionDateStart} - {inspectionDateEnd}
+					{inspectionTimeOpen} - {inspectionTimeClose}
 				</Text>
 			</HStack>
-			<HStack>
+			{/* <HStack>
 				<Icon color={"primary.main"} as={BsFillTelephoneFill} />
 				<Text textStyle={"caption"} fontWeight={"bold"}>
 					{property.agentNumber}
 				</Text>
-			</HStack>
+			</HStack> */}
 		</Flex>
 	);
 };
